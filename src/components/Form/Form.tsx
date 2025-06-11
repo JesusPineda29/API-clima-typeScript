@@ -1,21 +1,64 @@
+import { useState } from "react"
+import type { SearchType } from "../../types"
 import { countries } from "../../data/countries"
+import styles from "./Form.module.css"
+import { Alert } from "../Alert/Alert"
 
 
 export const Form = () => {
+
+    const [search, setSearch] = useState<SearchType>({
+        city: '',
+        country: ''
+    })
+
+    const handleChange = (e:React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => 
+    {
+        setSearch ({
+            ...search,
+            [e.target.name] : e.target.value
+        })
+    }
+
+    const [alert, setAlert] = useState('')
+
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>)=> {
+        e.preventDefault()
+
+        if(Object.values(search).includes('')) {
+            setAlert('Todos los campos son obligatirios')
+            return
+        }
+    }
+
     return (
-        <form>
-            <div>
+        <form 
+            className={styles.form}
+            onSubmit={handleSubmit}
+        >
+
+            {alert && <Alert>{alert}</Alert>}
+            <div className={styles.field}>
                 <label htmlFor="city">Ciudad</label>
                 <input
                     type="text"
                     id="city"
                     name="city"
                     placeholder="Ciudad"
+                    value={search.city}
+                    onChange={handleChange}
                 />
             </div>
-            <div>
-                <label htmlFor="city">País</label>
-                <select>
+
+            <div className={styles.field}>
+                <label htmlFor="country">País</label>
+                <select 
+                    id="country"
+                    value={search.country}
+                    name="country"
+                    onChange={handleChange}
+                >
                     <option value="">--- Seleccione un País ---</option>
                     {countries.map(country => (
                         <option
@@ -25,7 +68,8 @@ export const Form = () => {
                     ))}
                 </select>
             </div>
-            <input type="submit" value='Consultar Clima' />
+            <input className={styles.submit} type="submit" value='Consultar Clima' />
         </form>
     )
 }
+
