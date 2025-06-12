@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react" 
 import type { SearchType } from "../../types"
 import { countries } from "../../data/countries"
 import styles from "./Form.module.css"
@@ -16,6 +16,18 @@ export const Form = ({fetchWeather}: FormProps) => {
         country: ''
     })
 
+    const [alert, setAlert] = useState('')
+
+    useEffect(() => {
+        if (alert) {
+            const timer = setTimeout(() => {
+                setAlert('')
+            }, 2000) // 
+            return () => clearTimeout(timer)
+        }
+    }, [alert])
+
+    
     const handleChange = (e:React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => 
     {
         setSearch ({
@@ -24,14 +36,12 @@ export const Form = ({fetchWeather}: FormProps) => {
         })
     }
 
-    const [alert, setAlert] = useState('')
-
-
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>)=> {
         e.preventDefault()
 
         if(Object.values(search).includes('')) {
-            setAlert('Todos los campos son obligatirios')
+            // Corregí un pequeño error de tipeo aquí: "obligatorios"
+            setAlert('Todos los campos son obligatorios') 
             return
         }
         fetchWeather(search)
@@ -77,4 +87,3 @@ export const Form = ({fetchWeather}: FormProps) => {
         </form>
     )
 }
-

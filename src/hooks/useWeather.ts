@@ -1,7 +1,7 @@
 import axios from "axios"
 import { z } from "zod"
 import type { SearchType } from "../types"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 // para tipar la respuesta de una API se puede usar TYPE GUARD
 // function isWeatherResponse(weather: unknown) : weather is Weather {
@@ -43,6 +43,15 @@ export const useWeather = () => {
     const [weather, setWeather] = useState<Weather>(initialState)
     const [loading, setLoading] = useState(false)
     const [notFound, setNotFound ] = useState(false)
+
+    useEffect(() => {
+        if (notFound) {
+            const timer = setTimeout(() => {
+                setNotFound(false)
+            }, 3000);
+            return () => clearTimeout(timer)
+        }
+    }, [notFound]) 
 
     const fetchWeather = async (search: SearchType) => {
 

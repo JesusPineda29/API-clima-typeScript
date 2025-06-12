@@ -9,6 +9,7 @@ import { useWeather } from './hooks/useWeather';
 export const App = () => {
   const { loading, weather, notFound, fetchWeather, hasWeatherData } = useWeather();
 
+
   return (
     <div className={styles.app}>
       <main className={styles.main}>
