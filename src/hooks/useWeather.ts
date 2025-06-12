@@ -1,8 +1,9 @@
 import axios from "axios"
 import { z } from "zod"
 import type { SearchType } from "../types"
+import { useMemo, useState } from "react"
 
-// para tipar la respuesta de una API se usa TYPE GUARD
+// para tipar la respuesta de una API se puede usar TYPE GUARD
 // function isWeatherResponse(weather: unknown) : weather is Weather {
 //     return (
 //         Boolean(weather) &&
@@ -16,7 +17,7 @@ import type { SearchType } from "../types"
 
 
 // ZOD
-const Weather = z.object({ // esquima
+const Weather = z.object({ // Schema
     name: z.string(),
     main: z.object({
         temp: z.number(),
@@ -25,16 +26,29 @@ const Weather = z.object({ // esquima
     })
 })
 
-type Weather = z.infer<typeof Weather>
+export type Weather = z.infer<typeof Weather>
 
 
 
 
 export const useWeather = () => {
 
+    const [weather, setWeather] = useState<Weather>({
+        name: '',
+        main: {
+            temp: 0,
+            temp_min: 0,
+            temp_max: 0
+        }
+    })
+
+    const [loading, setLoading]=useState(false)
+
     const fetchWeather = async (search: SearchType) => {
 
         const appId = import.meta.env.VITE_API_KEY
+
+        setLoading(true)
 
         try {
             const geoUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${search.city},${search.country}&appid=${appId}`
@@ -57,17 +71,23 @@ export const useWeather = () => {
             const {data: weatherResult} = await axios(weatherUrl)
             const result = Weather.safeParse(weatherResult)
             if(result.success) {
-                console.log(result.data.name)
-                console.log(result.data.main.temp)
-            }
-
+                setWeather(result.data)
+            } 
 
         } catch (error) {
             console.log(error)
+        } finally { // independintemente si se ejecuta el codigo del try o del catch, finally siempre se ejecuta
+            setLoading(false)
         }
     }
 
+    const hasWeatherData = useMemo(() => weather.name  ,[weather])
+
+
     return {
-        fetchWeather
+        weather,
+        loading,
+        fetchWeather,
+        hasWeatherData
     }
 }
