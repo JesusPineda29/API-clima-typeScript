@@ -1,3 +1,13 @@
+.app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* altura mínima igual a la pantalla */
+}
+
+.main {
+    flex: 1; /* ocupa todo el espacio restante para empujar el footer */
+}
+
 .title {
     text-align: center;
     font-size: 3rem;
@@ -9,10 +19,11 @@
     max-width: 100rem;
     margin: 0 auto;
 }
+
 @media (min-width: 768px) {
     .container {
         display: grid;
-        grid-template-columns: repeat(2, 1fr) ;
+        grid-template-columns: repeat(2, 1fr);
         align-items: center;
         gap: 4rem;
         margin-top: 5rem;
